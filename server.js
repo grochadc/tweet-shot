@@ -13,6 +13,8 @@ app.use(express.static('public'));
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
+process.env.PWD = process.cwd()
+
 function generateID() {
     var S4 = function() {
        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
@@ -38,12 +40,12 @@ app.get('/', (req, res) => {
 
 app.post('/screenshot', (req, res) =>{
   if(!validURL(req.body.url)) res.send('Invalid url <a href="/">return home</a>');
-  
+
   let id = generateID();
   let httpUrl = addhttp(req.body.url);
   screenshotTweet.default(
     httpUrl,
-    path.join(__dirname, 'public', 'tweets',id+'.jpg')
+    path.join(process.env.PWD, 'public', 'tweets',id+'.jpg')
   )
   .then(() => {
     res.redirect('/success?img='+id);
